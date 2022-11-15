@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           context.read<CensusBloc>().add(GetMunicipalitiesCensusDataEvent(key: selectedDistrict));
                         }
                         else{
-                          selectedGeo==state.geoList[index].slug;
+                          selectedGeo=state.geoList[index].slug;
                         context.read<CensusBloc>().add(GetGeographicsCensusDataEvent(key: state.geoList[index].slug));
 
                         }
@@ -131,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           context.read<DropDownBloc>().add(GetDistrictListEvent(key: selectedProvince));
                           }
                           else if(dropDownTitle[index]=='Geography'){
+                            print(selectedGeo);
                             context.read<DropDownBloc>().add(
                                 GetGeographicalListEvent());
                           }
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(children:
                             [
                               Text(
-                                dropDownTitle[index]=='Province'?selectedProvince==''?
+                                dropDownTitle[index]=='Geography'?selectedGeo==''?'${dropDownTitle[index]}':'$selectedGeo':dropDownTitle[index]=='Province'?selectedProvince==''?
                                 '${dropDownTitle[index]}':'${selectedProvince}':dropDownTitle[index]=='District'?selectedDistrict==''?'${dropDownTitle[index]}':'${selectedDistrict}':
                                 dropDownTitle[index]=='Municipalities'?selectedMunicipal==''?'${dropDownTitle[index]}':'${selectedMunicipal}':selectedGeo==''?'${dropDownTitle[index]}':'$selectedGeo}',
                                 overflow: TextOverflow.ellipsis,),
@@ -177,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text('${census.name}',style: TextStyle(fontSize:20,fontWeight: FontWeight.bold),),
                           SizedBox(height: 20),
                           Expanded(
-                            child: GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                            child: GridView(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                              children: [
                                Container(
                                  margin:EdgeInsets.all(10),
