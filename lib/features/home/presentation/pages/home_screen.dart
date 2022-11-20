@@ -1,8 +1,10 @@
 import 'package:cbs_test/features/home/presentation/bloc/census_bloc/census_bloc.dart';
 import 'package:cbs_test/features/home/presentation/bloc/drop_down_bloc/drop_down_bloc.dart';
+import 'package:cbs_test/features/home/presentation/widgets/grid_container.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:cbs_test/generated/locale_keys.g.dart';
 import '../../domain/entities/census.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,27 +20,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 
+
+
   void _showDialog(String dropDownTitle){
     showDialog(context: context, builder: (BuildContext context){
         return BlocBuilder<DropDownBloc, DropDownState>(
          builder: (context, state) {
            if(state is DropDownDistrictError){
-             return SimpleDialog(
-               children: [Text('Please select Province first')],
+             return  SimpleDialog(
+               contentPadding: const EdgeInsets.all(20),
+               children: [Text(LocaleKeys.select_province_error.tr())],
              );
            }
            if(state is DropDownMunicipalityError){
-             return SimpleDialog(
-               children: [Text('Please select district first')],
+             return  SimpleDialog(
+               contentPadding: const EdgeInsets.all(20),
+               children: [Text(LocaleKeys.select_district_error.tr())],
              );
            }
            if(state is GeographicCensusLoaded){
             return SimpleDialog(
-            title: Text('Select $dropDownTitle'),
+            title: Text('${dropDownTitle=='Province'?LocaleKeys.select_province.tr():dropDownTitle=='District'?LocaleKeys.select_district.tr():dropDownTitle=='Geography'?LocaleKeys.select_geography.tr():dropDownTitle=='Municipalities'?LocaleKeys.select_municipality.tr():''}'),
             children: [
               SingleChildScrollView(
                 child: ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.geoList.length,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
@@ -50,32 +56,36 @@ class _HomeScreenState extends State<HomeScreen> {
                         });
                         if(dropDownTitle=='Province'){
                             selectedProvince=state.geoList[index].slug;
+                            selectedProvinceName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
                         context.read<CensusBloc>().add(GetProvinceCensusDataEvent());
 
                         }
                         else if(dropDownTitle=='District'){
                           selectedDistrict=state.geoList[index].slug;
+                          selectedDistrictName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
                         context.read<CensusBloc>().add(GetDistrictCensusDataEvent(key: selectedProvince));
                         }
                         else if(dropDownTitle=='Municipalities'){
                           selectedMunicipal=state.geoList[index].slug;
+                          selectedMunicipalName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
                           context.read<CensusBloc>().add(GetMunicipalitiesCensusDataEvent(key: selectedDistrict));
                         }
                         else{
                           selectedGeo=state.geoList[index].slug;
+                          selectedGeoName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
                         context.read<CensusBloc>().add(GetGeographicsCensusDataEvent(key: state.geoList[index].slug));
 
                         }
                         Navigator.pop(context);
                       },
-                      title: Text('${state.geoList[index].name}'),);
+                      title: Text(context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali),);
                 }),
               )
             ],
           );
            }
            else{
-             return Center();
+             return const Center();
 
            }
   }
@@ -89,6 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedDistrict='';
   String selectedGeo='';
   String selectedMunicipal='';
+  String selectedProvinceName='';
+  String selectedDistrictName='';
+  String selectedGeoName='';
+  String selectedMunicipalName='';
+  var dropdown_items = ['ने', 'EN'];
+  String? value='EN';
+
+
 
   @override
   void initState() {
@@ -100,14 +118,53 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueAccent.shade700,
-        title: RichText(
-            text: TextSpan(
-              text: 'Preliminary report of National Census 2078',
-                  style: TextStyle(fontSize: 20)
-            ),
-             ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70),
+        child: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.blueAccent.shade700,
+          title: Row(
+            children: [
+              Image.asset('assets/images/ic_app_icon.png'),
+              Expanded(child: Text(LocaleKeys.title.tr(),maxLines: 3,textAlign: TextAlign.center,style: TextStyle(fontSize: 18),)),
+              Container(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                  color: Colors.white,
+                ),
+                width: 67,
+                height: 36,
+                margin: EdgeInsets.all(5),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    icon: Icon(Icons.arrow_drop_down),
+                    value: value,
+                    items: dropdown_items.map((e) {
+                      return DropdownMenuItem(value:e,child: Text(e));
+                    }).toList(),
+                    onChanged: (selectedItem) async {
+                      setState(() {
+                        value = selectedItem;
+                      });
+                      if (selectedItem == 'EN') {
+                        await context.setLocale(
+                          const Locale('en'),
+                        );
+                      } else {
+                        await context.setLocale(
+                          const Locale('ne'),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          )
+        ),
       ),
       body: Container(
         child: Column(
@@ -152,11 +209,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(children:
                             [
                               Text(
-                                dropDownTitle[index]=='Geography'?selectedGeo==''?'${dropDownTitle[index]}':'$selectedGeo':dropDownTitle[index]=='Province'?selectedProvince==''?
-                                '${dropDownTitle[index]}':'${selectedProvince}':dropDownTitle[index]=='District'?selectedDistrict==''?'${dropDownTitle[index]}':'${selectedDistrict}':
-                                dropDownTitle[index]=='Municipalities'?selectedMunicipal==''?'${dropDownTitle[index]}':'${selectedMunicipal}':selectedGeo==''?'${dropDownTitle[index]}':'$selectedGeo}',
+                                dropDownTitle[index]=='Geography'?selectedGeoName==''?LocaleKeys.geography.tr():selectedGeoName:dropDownTitle[index]=='Province'?selectedProvinceName==''?
+                                LocaleKeys.province.tr():selectedProvinceName:dropDownTitle[index]=='District'?selectedDistrictName==''?LocaleKeys.district.tr():selectedDistrictName:
+                                dropDownTitle[index]=='Municipalities'?selectedMunicipalName==''?LocaleKeys.municipalities.tr():selectedMunicipalName:'',
                                 overflow: TextOverflow.ellipsis,),
-                            Icon(Icons.arrow_drop_down_outlined)
+                            const Icon(Icons.arrow_drop_down_outlined)
                             ])),
                       );
                     }),
@@ -172,55 +229,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   else if(state is CensusLoaded){
                     Census census=state.census.firstWhere((element) => element.slug==currentSlug);
                     return Padding(
-                      padding: EdgeInsets.all(20),
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                       child: Column(
                         children: [
-                          Text('${census.name}',style: TextStyle(fontSize:20,fontWeight: FontWeight.bold),),
+                          Text('${context.locale.toString()=='en'?census.name:census.nameInNepali}',style: TextStyle(fontSize:20,fontWeight: FontWeight.bold),),
                           SizedBox(height: 20),
                           Expanded(
-                            child: GridView(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                            child: GridView(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                              children: [
-                               Container(
-                                 margin:EdgeInsets.all(10),
-                                 padding: EdgeInsets.all(10),
-                                 child: Column(
-                                   children: [
-                                     Text('Household',style: TextStyle(fontWeight: FontWeight.bold),),
-                                     Text('${census.households}'),
-                                   ],
-                                 ),
-                               ),
-                               Container(
-                                 margin:EdgeInsets.all(10),
-                                 padding: EdgeInsets.all(10),
-                                 child: Column(
-                                   children: [
-                                     Text('Females',style: TextStyle(fontWeight: FontWeight.bold),),
-                                     Text('${census.female}'),
-                                   ],
-                                 ),
-                               ),
-                               Container(
-                                 margin:EdgeInsets.all(10),
-                                 padding: EdgeInsets.all(10),
-                                 child: Column(
-                                   children: [
-                                     Text('Males',style: TextStyle(fontWeight: FontWeight.bold),),
-                                     Text('${census.male}'),
-                                   ],
-                                 ),
-                               ),
-                               Container(
-                                 margin:EdgeInsets.all(10),
-                                 padding: EdgeInsets.all(10),
-                                 child: Column(
-                                   children: [
-                                     Text('Families',style: TextStyle(fontWeight: FontWeight.bold),),
-                                     Text('${census.families}'),
-                                   ],
-                                 ),
-                               ),
-
+                              GridContainer(locale: LocaleKeys.household.tr(), census: census.households),
+                               GridContainer(locale: LocaleKeys.females.tr(), census: census.female),
+                               GridContainer(locale: 'Male', census: census.male),
+                               GridContainer(locale: LocaleKeys.families.tr(), census: census.families),
+                               GridContainer(locale: LocaleKeys.gender_ratio, census: census.genderRatio),
+                              GridContainer(locale: LocaleKeys.total_population.tr(), census: census.totalPopulation)
                              ],
                                 ),
                           ),

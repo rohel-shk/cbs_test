@@ -1,0 +1,19 @@
+{
+  "title":"राष्ट्रिय जनगणना २०७८ को प्रारम्भिक प्रतिवेदन",
+  "household": "घरपरिवारहरू",
+  "females": "महिलाहरू",
+  "male": "पुरुष",
+  "families": "परिवारहरू",
+  "geography": "भूगोल",
+  "province": "प्रान्त",
+  "district": "जिल्ला",
+  "municipalities": "नगरपालिकाहरू",
+  "select_district_error": "कृपया पहिले जिल्ला चयन गर्नुहोस्",
+  "select_province_error": "कृपया पहिले प्रदेश चयन गर्नुहोस्",
+  "select_geography": "भूगोल चयन गर्नुहोस्",
+  "select_province": "प्रान्त चयन गर्नुहोस्",
+  "select_district": "जिल्ला चयन गर्नुहोस्",
+  "select_municipality": "नगरपालिका चयन गर्नुहोस्",
+  "total_population": "कुल जनसंख्या",
+  "gender_ratio": "लिङ्ग अनुपात"
+}

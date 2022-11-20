@@ -8,7 +8,7 @@ class Census{
   final dynamic totalPopulation;
   final dynamic male;
   final dynamic female;
-  final dynamic genderRatio;
+  final double genderRatio;
   final dynamic avgFamilySize;
   final dynamic  growthRate;
   final dynamic  populationDensity;

@@ -1,0 +1,19 @@
+{
+  "title":"Preliminary Report of National Census 2078",
+  "household": "Households",
+  "females": "Females",
+  "male": "Males",
+  "families": "Families",
+  "geography": "Geography",
+  "province": "Province",
+  "district": "District",
+  "municipalities": "Municipalities",
+  "select_district_error": "Please select district first",
+  "select_province_error": "Please select province first",
+  "select_geography": "Select Geography",
+  "select_province": "Select Province",
+  "select_district": "Select District",
+  "select_municipality": "Select Municipality",
+  "total_population": "Total Population",
+  "gender_ratio": "Gender Ratio"
+}
