@@ -15,12 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 
-
 class _HomeScreenState extends State<HomeScreen> {
-
-
-
-
 
   void _showDialog(String dropDownTitle){
     showDialog(context: context, builder: (BuildContext context){
@@ -43,43 +38,49 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text('${dropDownTitle=='Province'?LocaleKeys.select_province.tr():dropDownTitle=='District'?LocaleKeys.select_district.tr():dropDownTitle=='Geography'?LocaleKeys.select_geography.tr():dropDownTitle=='Municipalities'?LocaleKeys.select_municipality.tr():''}'),
             children: [
               SingleChildScrollView(
-                child: ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state.geoList.length,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                    itemBuilder: (context,index){
-                    return ListTile(
-                      onTap: (){
-                        setState((){
-                        currentSlug=state.geoList[index].slug;
-                        });
-                        if(dropDownTitle=='Province'){
-                            selectedProvince=state.geoList[index].slug;
-                            selectedProvinceName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
-                        context.read<CensusBloc>().add(GetProvinceCensusDataEvent());
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()
+                ),
+                child: SizedBox(
+                  width: double.maxFinite,
+                  child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: state.geoList.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                      itemBuilder: (context,index){
+                      return ListTile(
+                        onTap: (){
+                          setState((){
+                          currentSlug=state.geoList[index].slug;
+                          });
+                          if(dropDownTitle=='Province'){
+                              selectedProvince=state.geoList[index].slug;
+                              selectedProvinceName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
+                          context.read<CensusBloc>().add(GetProvinceCensusDataEvent());
 
-                        }
-                        else if(dropDownTitle=='District'){
-                          selectedDistrict=state.geoList[index].slug;
-                          selectedDistrictName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
-                        context.read<CensusBloc>().add(GetDistrictCensusDataEvent(key: selectedProvince));
-                        }
-                        else if(dropDownTitle=='Municipalities'){
-                          selectedMunicipal=state.geoList[index].slug;
-                          selectedMunicipalName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
-                          context.read<CensusBloc>().add(GetMunicipalitiesCensusDataEvent(key: selectedDistrict));
-                        }
-                        else{
-                          selectedGeo=state.geoList[index].slug;
-                          selectedGeoName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
-                        context.read<CensusBloc>().add(GetGeographicsCensusDataEvent(key: state.geoList[index].slug));
+                          }
+                          else if(dropDownTitle=='District'){
+                            selectedDistrict=state.geoList[index].slug;
+                            selectedDistrictName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
+                          context.read<CensusBloc>().add(GetDistrictCensusDataEvent(key: selectedProvince));
+                          }
+                          else if(dropDownTitle=='Municipalities'){
+                            selectedMunicipal=state.geoList[index].slug;
+                            selectedMunicipalName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
+                            context.read<CensusBloc>().add(GetMunicipalitiesCensusDataEvent(key: selectedDistrict));
+                          }
+                          else{
+                            selectedGeo=state.geoList[index].slug;
+                            selectedGeoName=context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali;
+                          context.read<CensusBloc>().add(GetGeographicsCensusDataEvent(key: state.geoList[index].slug));
 
-                        }
-                        Navigator.pop(context);
-                      },
-                      title: Text(context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali),);
-                }),
+                          }
+                          Navigator.pop(context);
+                        },
+                        title: Text(context.locale.toString()=='en'?state.geoList[index].name:state.geoList[index].nameInNepali),);
+                  }),
+                ),
               )
             ],
           );
@@ -104,7 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedGeoName='';
   String selectedMunicipalName='';
   var dropdown_items = ['ने', 'EN'];
-  String? value='EN';
 
 
 
@@ -117,9 +117,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+  String? value=context.locale.toString()=='en'?'EN':'ने';
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70),
+        preferredSize: const Size.fromHeight(70),
         child: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.blueAccent.shade700,
@@ -128,8 +129,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Image.asset('assets/images/ic_app_icon.png'),
               Expanded(child: Text(LocaleKeys.title.tr(),maxLines: 3,textAlign: TextAlign.center,style: TextStyle(fontSize: 18),)),
               Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(
                     Radius.circular(20),
                   ),
@@ -177,6 +178,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: dropDownTitle.length,
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()
+                    ),
                     itemBuilder: (context,index){
                       return InkWell(
                         onTap: () async{
@@ -237,6 +241,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           Expanded(
                             child: GridView(
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                             physics: BouncingScrollPhysics(
+                               parent: AlwaysScrollableScrollPhysics()
+                             ),
                              children: [
                               GridContainer(locale: LocaleKeys.household.tr(), census: census.households),
                                GridContainer(locale: LocaleKeys.females.tr(), census: census.female),
