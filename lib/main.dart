@@ -37,12 +37,13 @@ class _MainAppState extends State<MainApp> {
         BlocProvider(create: (context)=>sl<DropDownBloc>())
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         home: const HomeScreen(),
         theme: ThemeData(
-          scaffoldBackgroundColor: const Color(0xFFFCFBF4)
+          scaffoldBackgroundColor: const Color(0XFFF5F5F5)
         ),
       ),
     );

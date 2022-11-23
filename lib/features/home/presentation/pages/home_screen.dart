@@ -3,6 +3,7 @@ import 'package:cbs_test/features/home/presentation/bloc/drop_down_bloc/drop_dow
 import 'package:cbs_test/features/home/presentation/widgets/grid_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cbs_test/generated/locale_keys.g.dart';
 import '../../domain/entities/census.dart';
@@ -31,6 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
              return  SimpleDialog(
                contentPadding: const EdgeInsets.all(20),
                children: [Text(LocaleKeys.select_district_error.tr())],
+             );
+           }
+           if(state is DropDownLoading){
+             return const Center(
+               child: SpinKitFadingCircle(
+                 color: Colors.white,
+               ),
              );
            }
            if(state is GeographicCensusLoaded){
@@ -172,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
               height: 50,
-
+              color: Colors.white,
               child:
                 ListView.builder(
                     itemCount: dropDownTitle.length,
@@ -226,8 +234,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: BlocBuilder<CensusBloc,CensusState>(
                 builder: (context,state){
                   if(state is CensusDataLoading){
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return const Center(
+                      child: SpinKitCircle(
+                        color: Colors.blueAccent,
+                      ),
                     );
                   }
                   else if(state is CensusLoaded){
@@ -239,20 +249,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text('${context.locale.toString()=='en'?census.name:census.nameInNepali}',style: TextStyle(fontSize:20,fontWeight: FontWeight.bold),),
                           SizedBox(height: 20),
                           Expanded(
-                            child: GridView(
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                             physics: BouncingScrollPhysics(
-                               parent: AlwaysScrollableScrollPhysics()
-                             ),
-                             children: [
-                              GridContainer(locale: LocaleKeys.household.tr(), census: census.households),
-                               GridContainer(locale: LocaleKeys.females.tr(), census: census.female),
-                               GridContainer(locale: 'Male', census: census.male),
-                               GridContainer(locale: LocaleKeys.families.tr(), census: census.families),
-                               GridContainer(locale: LocaleKeys.gender_ratio, census: census.genderRatio),
-                              GridContainer(locale: LocaleKeys.total_population.tr(), census: census.totalPopulation)
-                             ],
-                                ),
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              color:Colors.white,
+                              child: GridView(
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                               physics: BouncingScrollPhysics(
+                                 parent: AlwaysScrollableScrollPhysics()
+                               ),
+                               children: [
+                                GridContainer(locale: LocaleKeys.household.tr(), census: census.households),
+                                 GridContainer(locale: LocaleKeys.females.tr(), census: census.female),
+                                 GridContainer(locale: LocaleKeys.males.tr(), census: census.male),
+                                 GridContainer(locale: LocaleKeys.families.tr(), census: census.families),
+                                 GridContainer(locale: LocaleKeys.gender_ratio.tr(), census: census.genderRatio),
+                                GridContainer(locale: LocaleKeys.total_population.tr(), census: census.totalPopulation)
+                               ],
+                                  ),
+                            ),
                           ),
                         ],
                       ),

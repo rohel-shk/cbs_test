@@ -4,6 +4,7 @@ abstract class  LocaleKeys {
   static const title = 'title';
   static const household = 'household';
   static const females = 'females';
+  static const males = 'males';
   static const families = 'families';
   static const geography = 'geography';
   static const province = 'province';

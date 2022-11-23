@@ -19,15 +19,15 @@ class _GridContainerState extends State<GridContainer> {
   Widget build(BuildContext context) {
     return  Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
+        boxShadow: const [
+           BoxShadow(
             color: Colors.grey,
             offset: Offset(0.0, 1.0), //(x,y)
             blurRadius: 6.0,
           ),
         ],
         borderRadius: BorderRadius.circular(10),
-        color:Colors.white,
+        color:Colors.white60,
       ),
       margin:EdgeInsets.all(10),
       padding: EdgeInsets.all(10),
